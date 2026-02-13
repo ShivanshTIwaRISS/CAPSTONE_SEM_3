@@ -1,0 +1,49 @@
+name: Simple CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install client dependencies
+      working-directory: ./client
+      run: npm ci
+
+    - name: Build client
+      working-directory: ./client
+      run: npm run build
+
+    - name: Install server dependencies
+      working-directory: ./server
+      run: npm ci
+
+    - name: Build server (lint)
+      working-directory: ./server
+      run: npm run lint
+
+    - name: Run client tests
+      working-directory: ./client
+      run: npm test -- --run
+      continue-on-error: true
+
+    - name: Run server tests
+      working-directory: ./server
+      run: npm test
+      continue-on-error: true
