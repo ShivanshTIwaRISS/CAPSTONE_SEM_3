@@ -3,7 +3,7 @@ name: Deploy Image.html to EC2 (Ubuntu + Nginx)
 on:
   push:
     branches:
-      - demo
+      - CI/CD
   workflow_dispatch:
 
 jobs:
