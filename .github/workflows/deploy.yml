@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Build Docker Image
-      run: docker build . -t shiva0909/node20
+      run: docker build . -t shiva0909/node20:latest
 
     - name: Login to Docker Hub
       run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u shiva0909 --password-stdin
