@@ -1,7 +1,7 @@
-output "bucket_name" {
-  value = aws_s3_bucket.capstone_bucket.id
+output "cluster_name" {
+  value = aws_eks_cluster.eks.name
 }
 
-output "bucket_arn" {
-  value = aws_s3_bucket.capstone_bucket.arn
+output "cluster_endpoint" {
+  value = aws_eks_cluster.eks.endpoint
 }
