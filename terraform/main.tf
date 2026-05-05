@@ -1,3 +1,11 @@
+terraform {
+  backend "s3" {
+    bucket = "capstone-ecommerce-bucket-c61fbd24"
+    key    = "terraform.tfstate"
+    region = "us-east-1"
+  }
+}
+
 provider "aws" {
   region = var.aws_region
 }
@@ -51,7 +59,7 @@ resource "aws_route_table_association" "b" {
 
 # --- EKS Cluster using existing LabRole ---
 resource "aws_eks_cluster" "eks" {
-  name     = "capstone-eks-cluster"
+  name     = "capstone-eks-cluster-v2"
   role_arn = "arn:aws:iam::242402477956:role/LabRole"
 
   vpc_config {
