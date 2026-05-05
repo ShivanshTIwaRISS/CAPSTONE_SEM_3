@@ -105,15 +105,24 @@ jobs:
           aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Update kubeconfig
         run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name $EKS_CLUSTER_NAME
 
       - name: Deploy to EKS
-        env:
-          IMAGE_NAME: ${{ needs.phase3-container-build.outputs.image_name }}
         run: |
+          # Reconstruct the image name since outputs can sometimes be tricky between jobs
+          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG=${{ github.sha }}
+          FULL_IMAGE_NAME="${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
+          
+          echo "Deploying image: $FULL_IMAGE_NAME"
+          
           # Replace placeholder with actual image
-          sed -i "s|<IMAGE_NAME>|$IMAGE_NAME|g" k8s/deployment.yaml
+          sed -i "s|<IMAGE_NAME>|$FULL_IMAGE_NAME|g" k8s/deployment.yaml
           
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -f k8s/deployment.yaml
