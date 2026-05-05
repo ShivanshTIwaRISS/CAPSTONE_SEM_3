@@ -40,3 +40,12 @@ resource "aws_s3_bucket_public_access_block" "public_access_block" {
   ignore_public_acls      = true
   restrict_public_buckets = true
 }
+
+resource "aws_ecr_repository" "capstone_repo" {
+  name                 = "capstone-ecommerce-repo"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
