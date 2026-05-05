@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: capstone-ecommerce-app
+  namespace: capstone-ecommerce
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: capstone-ecommerce
+  template:
+    metadata:
+      labels:
+        app: capstone-ecommerce
+    spec:
+      containers:
+      - name: capstone-ecommerce
+        image: <IMAGE_NAME> # This will be replaced in the pipeline
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10

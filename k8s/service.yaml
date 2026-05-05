@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: capstone-ecommerce-service
+  namespace: capstone-ecommerce
+spec:
+  selector:
+    app: capstone-ecommerce
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
