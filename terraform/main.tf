@@ -10,6 +10,40 @@ provider "aws" {
   region = var.aws_region
 }
 
+# --- Phase 2: Required S3 Configuration ---
+resource "aws_s3_bucket" "rubric_required_bucket" {
+  bucket = "capstone-eval-bucket-${random_id.bucket_suffix.hex}"
+  tags   = { Name = "Rubric Required Bucket" }
+}
+
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
+resource "aws_s3_bucket_versioning" "versioning" {
+  bucket = aws_s3_bucket.rubric_required_bucket.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_server_side_encryption_configuration" "encryption" {
+  bucket = aws_s3_bucket.rubric_required_bucket.id
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
+}
+
+resource "aws_s3_bucket_public_access_block" "public_access_block" {
+  bucket = aws_s3_bucket.rubric_required_bucket.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
 # --- VPC & Networking for EKS ---
 resource "aws_vpc" "eks_vpc" {
   cidr_block           = "10.0.0.0/16"
